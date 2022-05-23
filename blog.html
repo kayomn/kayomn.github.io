@@ -1,0 +1,63 @@
+<!doctype html>
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" type="text/css" href="/styles/house.css" />
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<title>[ Kayomn ]</title>
+	</head>
+
+	<body>
+		<header><a href="/"><img src="/media/logo.png" /></a></header>
+
+		<main style="min-height: 700px;">
+			<article id="blog-feed">
+
+			</article>
+
+			<script>
+				window.addEventListener("load", async () => {
+					const blogFeed = document.getElementById("blog-feed")
+					const searchParams = new URLSearchParams(window.location.search)
+					const postID = searchParams.get("post")
+
+					if (postID) {
+						const response = await fetch(`https://cms.kayomn.net/api/blog/${postID}`)
+
+						if (!response.ok) return console.warn("Blog post is not reachable");
+
+						response.json().then(post => {
+							blogFeed.innerHTML =
+							`<div class="title">${post.title}</div>
+							<div class="subtitle">Posted ${post.created} by ${post.author}</div>
+							<p>${post.brief}</p>
+							<p>${post.body}</p>`
+						})
+					} else {
+						const response = await fetch("https://cms.kayomn.net/api/blog")
+
+						if (!response.ok) return console.warn("Blog feed is not reachable");
+
+						response.json().then(blog => {
+							const blogPosts = []
+
+							blogPosts.forEach(post => {
+								repoProjects.push(`<div style="animation: slide-right 0.4s ease;">
+									<a href="javascript:void(0);" onclick="" class="subheading">${post.title}</a>
+									<div>${post.brief}</div>
+								</div>`)
+							})
+
+							document.getElementById("blog-feed").innerHTML = blogPosts.join("\n")
+						})
+					}
+				})
+			</script>
+		</main>
+
+		<footer>
+			<div>Website by Kayomn &copy; 2019 - 2022.</div>
+		</footer>
+	</body>
+</html>

@@ -1,0 +1,89 @@
+<!doctype html>
+
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="stylesheet" type="text/css" href="/styles/house.css" />
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<title>[ Kayomn ]</title>
+	</head>
+
+	<body>
+		<header><a href="/"><img src="/media/logo.png" /></a></header>
+
+		<main style="min-height: 700px;">
+			<article class="columns">
+				<div style="min-width: 70%;">
+					<div class="title">Articles</div>
+					<div id="blog-feed"></div>
+
+					<script type="module">
+						import {strip} from "./scripts/markdown.js"
+
+						window.addEventListener("load", async () => {
+							const blogPromise = fetch("https://cms.kayomn.net/items/blog?limit=10")
+							const blogFeed = document.getElementById("blog-feed")
+
+							blogPromise.then(async blogResponse => {
+								if (blogResponse.ok) {
+									const blog = (await blogResponse.json()).data
+
+									if (Array.isArray(blog)) {
+										const htmlBlocks = []
+
+										for (const post of blog) {
+											const date = new Date(post.date_updated)
+
+											htmlBlocks.push(`<div style="animation: slide-right 0.4s ease;">
+												<a href="javascript:void(0);" class="subtitle">${post.title}</a>
+												<div>Posted ${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}</div>
+												<div>${strip(post.body).substring(0, 256)}...</div>
+											</div>`)
+										}
+
+										blogFeed.innerHTML = htmlBlocks.join("\n")
+									} else {
+										blogFeed.innerHTML = "Failed to parse blog feed"
+									}
+								} else {
+									blogFeed.innerHTML = "Failed to fetch blog feed."
+								}
+							})
+						})
+					</script>
+				</div>
+
+				<div style="min-width: 30%;">
+					<div class="title">Projects</div>
+					<div>Check out my <a href="https://github.com/kayomn">GitHub</a> profile to see what I'm working on right now.</div>
+					<div id="github-feed"></div>
+
+					<script type="module">
+						window.addEventListener("load", async () => {
+							const response = await fetch("https://api.github.com/users/kayomn/repos")
+
+							if (!response.ok) return console.warn("Github feed is not reachable")
+
+							response.json().then(projects => {
+								const repoProjects = []
+
+								for (const project of projects.sort((a, b) => (b.stargazers_count - a.stargazers_count))) {
+									if (!project.fork) repoProjects.push(`<div style="animation: slide-up 0.4s ease; margin: 15px 0;">
+										<a class="subtitle" href="${project.html_url}">${project.name}</a>
+										<div>${project.description || `<span style="font-style: italic;">No description.</span>`}</div>
+									</div>`)
+								}
+
+								document.getElementById("github-feed").innerHTML = repoProjects.join("\n")
+							})
+						})
+					</script>
+				</div>
+			</article>
+		</main>
+
+		<footer>
+			<div>Website by Kayomn &copy; 2019 - 2022.</div>
+		</footer>
+	</body>
+</html>

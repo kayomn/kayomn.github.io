@@ -1,0 +1,10 @@
+
+{
+	"name": "kayomn.net",
+	"build": {"dockerfile": "Dockerfile"},
+	"appPort": "8080:80",
+	"settings": {},
+	"extensions": [],
+	"workspaceMount": "source=${localWorkspaceFolder},target=/usr/share/nginx/html,type=bind,Z",
+	"workspaceFolder": "/usr/share/nginx/html"
+}
