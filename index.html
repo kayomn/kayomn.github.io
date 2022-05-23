@@ -36,7 +36,7 @@
 									htmlBlocks.push(`<div style="animation: slide-right 0.4s ease;">
 										<a href="./blog?post=${post.id}" class="subtitle">${post.title}</a>
 										<div>Posted ${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}</div>
-										<div>${post.body.substring(0, 256)}...</div>
+										<p>${post.body.substring(0, 256)}...</p>
 									</div>`)
 								}
 
