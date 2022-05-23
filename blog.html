@@ -12,45 +12,44 @@
 		<header><a href="/"><img src="/media/logo.png" /></a></header>
 
 		<main style="min-height: 700px;">
-			<article id="blog-feed">
-
-			</article>
+			<article id="blog-article"></article>
+			<script src="https://unpkg.com/commonmark@0.29.3/dist/commonmark.js"></script>
 
 			<script>
 				window.addEventListener("load", async () => {
-					const blogFeed = document.getElementById("blog-feed")
+					const url = "https://cms.kayomn.net/"
 					const searchParams = new URLSearchParams(window.location.search)
-					const postID = searchParams.get("post")
 
-					if (postID) {
-						const response = await fetch(`https://cms.kayomn.net/api/blog/${postID}`)
+					if (searchParams.has("post")) {
+						const blogArticle = document.getElementById("blog-article")
 
-						if (!response.ok) return console.warn("Blog post is not reachable");
+						const post = await fetch(`${url}items/blog/${searchParams.get("post")}`)
+							.then(response => response.json())
+							.catch(_ => {})
 
-						response.json().then(post => {
-							blogFeed.innerHTML =
-							`<div class="title">${post.title}</div>
-							<div class="subtitle">Posted ${post.created} by ${post.author}</div>
-							<p>${post.brief}</p>
-							<p>${post.body}</p>`
-						})
-					} else {
-						const response = await fetch("https://cms.kayomn.net/api/blog")
+						if (post.data) {
+							const postData = post.data
 
-						if (!response.ok) return console.warn("Blog feed is not reachable");
+							const author = await fetch(`${url}users/${postData.user_created}`)
+								.then(response => response.json())
+								.catch(_ => {})
 
-						response.json().then(blog => {
-							const blogPosts = []
+							if (author.data) {
+								const date = new Date(postData.date_updated)
+								const body = postData.body
+								const wordsPerMinute = 225;
 
-							blogPosts.forEach(post => {
-								repoProjects.push(`<div style="animation: slide-right 0.4s ease;">
-									<a href="javascript:void(0);" onclick="" class="subheading">${post.title}</a>
-									<div>${post.brief}</div>
-								</div>`)
-							})
+								blogArticle.innerHTML = `<div class="title">${postData.title}</div>
 
-							document.getElementById("blog-feed").innerHTML = blogPosts.join("\n")
-						})
+								<div style="animation: slide-right 0.4s ease;">
+									<div>Posted ${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()} by ${author.data.username}</div>
+									<div>${Math.ceil(body.trim().split(/\s+/).length / wordsPerMinute)} minute read.</div>
+									<div>${new commonmark.HtmlRenderer().render(new commonmark.Parser().parse(body))}</div>
+								</div>`
+							}
+						} else {
+							blogFeed.innerHTML = `<div style="font-style: italic;">Could not fetch blog post associated with the given ID.</div>`
+						}
 					}
 				})
 			</script>

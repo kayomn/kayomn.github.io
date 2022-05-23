@@ -20,35 +20,32 @@
 					<script type="module">
 						import {strip} from "./scripts/markdown.js"
 
+						const url = "https://cms.kayomn.net/"
+
 						window.addEventListener("load", async () => {
-							const blogPromise = fetch("https://cms.kayomn.net/items/blog?limit=10")
 							const blogFeed = document.getElementById("blog-feed")
 
-							blogPromise.then(async blogResponse => {
-								if (blogResponse.ok) {
-									const blog = (await blogResponse.json()).data
+							const blog = await fetch(`${url}items/blog?limit=10`)
+								.then(response => response.json())
+								.catch(_ => {})
 
-									if (Array.isArray(blog)) {
-										const htmlBlocks = []
+							if (blog.data) {
+								const htmlBlocks = []
 
-										for (const post of blog) {
-											const date = new Date(post.date_updated)
+								for (const post of blog.data) {
+									const date = new Date(post.date_updated)
 
-											htmlBlocks.push(`<div style="animation: slide-right 0.4s ease;">
-												<a href="javascript:void(0);" class="subtitle">${post.title}</a>
-												<div>Posted ${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}</div>
-												<div>${strip(post.body).substring(0, 256)}...</div>
-											</div>`)
-										}
-
-										blogFeed.innerHTML = htmlBlocks.join("\n")
-									} else {
-										blogFeed.innerHTML = "Failed to parse blog feed"
-									}
-								} else {
-									blogFeed.innerHTML = "Failed to fetch blog feed."
+									htmlBlocks.push(`<div style="animation: slide-right 0.4s ease;">
+										<a href="./blog?post=${post.id}" class="subtitle">${post.title}</a>
+										<div>Posted ${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}</div>
+										<div>${post.body.substring(0, 256)}...</div>
+									</div>`)
 								}
-							})
+
+								blogFeed.innerHTML = htmlBlocks.join("\n")
+							} else {
+								blogFeed.innerHTML = `<div style="font-style: italic;">Blog feed temporarily unavailable.</div>`
+							}
 						})
 					</script>
 				</div>
@@ -60,22 +57,26 @@
 
 					<script type="module">
 						window.addEventListener("load", async () => {
-							const response = await fetch("https://api.github.com/users/kayomn/repos")
+							const githubFeed = document.getElementById("github-feed")
 
-							if (!response.ok) return console.warn("Github feed is not reachable")
+							const repos = await fetch("https://api.github.com/users/kayomn/repos")
+								.then(response => response.json())
+								.catch(_ => [])
 
-							response.json().then(projects => {
-								const repoProjects = []
+							if (repos.length) {
+								const htmlBlocks = []
 
-								for (const project of projects.sort((a, b) => (b.stargazers_count - a.stargazers_count))) {
-									if (!project.fork) repoProjects.push(`<div style="animation: slide-up 0.4s ease; margin: 15px 0;">
-										<a class="subtitle" href="${project.html_url}">${project.name}</a>
-										<div>${project.description || `<span style="font-style: italic;">No description.</span>`}</div>
+								for (const repo of repos.sort((a, b) => (b.stargazers_count - a.stargazers_count))) {
+									if (!repo.fork) htmlBlocks.push(`<div style="animation: slide-up 0.4s ease; margin: 15px 0;">
+										<a class="subtitle" href="${repo.html_url}">${repo.name}</a>
+										<div>${repo.description || `<span style="font-style: italic;">No description.</span>`}</div>
 									</div>`)
 								}
 
-								document.getElementById("github-feed").innerHTML = repoProjects.join("\n")
-							})
+								githubFeed.innerHTML = htmlBlocks.join("\n")
+							} else {
+								githubFeed.innerHTML = `<div style="font-style: italic;">Github feed temporarily unavailable.</div>`
+							}
 						})
 					</script>
 				</div>
