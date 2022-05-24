@@ -103,12 +103,15 @@ body pre {
 	}
 
 	body header {
-		justify-content: center;
 		background: #0C0C0C;
 	}
 }
 
 @media (orientation: portrait), (max-width: 900px) {
+	body header {
+		justify-content: center;	
+	}
+
 	article.columns {
 		display: block;
 	}
