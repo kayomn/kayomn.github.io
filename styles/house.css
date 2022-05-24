@@ -40,6 +40,11 @@ article.columns {
 	display: flex;
 }
 
+article.letter {
+	width: 75%;
+	margin: 0 auto;
+}
+
 body {
 	font-family: "Lato Light", sans-serif;
 	color: #111;
@@ -108,11 +113,16 @@ body pre {
 }
 
 @media (orientation: portrait), (max-width: 900px) {
-	body header {
-		justify-content: center;	
-	}
-
 	article.columns {
 		display: block;
+	}
+
+	article.letter {
+		width: 100%;
+		margin: 0 auto;
+	}
+
+	body header {
+		justify-content: center;	
 	}
 }
