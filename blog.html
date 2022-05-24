@@ -33,7 +33,7 @@
 							blogArticle.innerHTML = `<div class="title">${post.title}</div>
 
 							<div style="animation: slide-right 0.4s ease;">
-								<div>Last updated ${new Intl.DateTimeFormat('en-US').format(new Date(post.date_updated))}</div>
+								<div>Last updated ${new Date(post.date_updated).toLocaleDateString(navigator.languages)}</div>
 								<div>${Math.ceil(body.trim().split(/\s+/).length / wordsPerMinute)} minute read.</div>
 								<div>${new commonmark.HtmlRenderer().render(new commonmark.Parser().parse(body))}</div>
 							</div>`
