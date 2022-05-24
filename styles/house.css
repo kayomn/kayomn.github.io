@@ -49,6 +49,7 @@ body {
 }
 
 body header {
+	display: flex;
 	background: #EEE;
 	padding: 5px 30px;
 }
@@ -102,6 +103,7 @@ body pre {
 	}
 
 	body header {
+		justify-content: center;
 		background: #0C0C0C;
 	}
 }
