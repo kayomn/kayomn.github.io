@@ -21,7 +21,7 @@
 				const searchParams = new URLSearchParams(window.location.search)
 				const postID = searchParams.get("post")
 
-				if (post) {
+				if (postID) {
 					window.addEventListener("load", async () => {
 						const blogArticle = document.getElementById("blog-article")
 						const post = (await fetchBlogPosts(postID)).data
