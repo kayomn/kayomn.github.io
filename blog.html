@@ -15,43 +15,37 @@
 			<article id="blog-article" class="letter"></article>
 			<script src="https://unpkg.com/commonmark@0.29.3/dist/commonmark.js"></script>
 
-			<script>
-				window.addEventListener("load", async () => {
-					const url = "https://cms.kayomn.net/"
-					const searchParams = new URLSearchParams(window.location.search)
+			<script type="module">
+				import {fetchBlogPosts} from "/scripts/cms.js"
 
-					if (searchParams.has("post")) {
+				const searchParams = new URLSearchParams(window.location.search)
+				const postID = searchParams.get("post")
+
+				if (post) {
+					window.addEventListener("load", async () => {
 						const blogArticle = document.getElementById("blog-article")
+						const post = (await fetchBlogPosts(postID)).data
 
-						const post = await fetch(`${url}items/blog/${searchParams.get("post")}`)
-							.then(response => response.json())
-							.catch(_ => {})
+						if (post) {
+							const body = post.body
+							const wordsPerMinute = 225;
 
-						if (post.data) {
-							const postData = post.data
+							blogArticle.innerHTML = `<div class="title">${post.title}</div>
 
-							const author = await fetch(`${url}users/${postData.user_created}`)
-								.then(response => response.json())
-								.catch(_ => {})
-
-							if (author.data) {
-								const date = new Date(postData.date_updated)
-								const body = postData.body
-								const wordsPerMinute = 225;
-
-								blogArticle.innerHTML = `<div class="title">${postData.title}</div>
-
-								<div style="animation: slide-right 0.4s ease;">
-									<div>Posted ${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()} by ${author.data.username}</div>
-									<div>${Math.ceil(body.trim().split(/\s+/).length / wordsPerMinute)} minute read.</div>
-									<div>${new commonmark.HtmlRenderer().render(new commonmark.Parser().parse(body))}</div>
-								</div>`
-							}
+							<div style="animation: slide-right 0.4s ease;">
+								<div>Last updated ${new Intl.DateTimeFormat('en-US').format(new Date(post.date_updated))}</div>
+								<div>${Math.ceil(body.trim().split(/\s+/).length / wordsPerMinute)} minute read.</div>
+								<div>${new commonmark.HtmlRenderer().render(new commonmark.Parser().parse(body))}</div>
+							</div>`
 						} else {
-							blogFeed.innerHTML = `<div style="font-style: italic;">Could not fetch blog post associated with the given ID.</div>`
+							blogArticle.innerHTML = `<div style="font-style: italic;">Could not fetch blog post associated with the given ID.</div>`
 						}
-					}
-				})
+					})
+				} else {
+					console.warn("Attempt to get blog without post ID, redirecting to `/`");
+
+					document.location.href = "/";
+				}
 			</script>
 		</main>
 

@@ -18,19 +18,17 @@
 					<div id="blog-feed"></div>
 
 					<script type="module">
-						const url = "https://cms.kayomn.net/"
+						import {fetchBlogPosts} from "/scripts/cms.js"
 
 						window.addEventListener("load", async () => {
 							const blogFeed = document.getElementById("blog-feed")
+							const postLimit = 10
+							const posts = (await fetchBlogPosts(blogPostLimit)).data
 
-							const blog = await fetch(`${url}items/blog?limit=10`)
-								.then(response => response.json())
-								.catch(_ => {})
-
-							if (blog.data) {
+							if (posts) {
 								const htmlBlocks = []
 
-								for (const post of blog.data) {
+								for (const post of posts) {
 									const date = new Date(post.date_updated)
 
 									htmlBlocks.push(`<div style="animation: slide-right 0.4s ease;">
