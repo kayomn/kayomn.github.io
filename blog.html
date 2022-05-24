@@ -16,7 +16,7 @@
 			<script src="https://unpkg.com/commonmark@0.29.3/dist/commonmark.js"></script>
 
 			<script type="module">
-				import {fetchBlogPosts} from "/scripts/cms.js"
+				import {fetchBlogPost} from "/scripts/cms.js"
 
 				const searchParams = new URLSearchParams(window.location.search)
 				const postID = searchParams.get("post")
@@ -24,7 +24,7 @@
 				if (postID) {
 					window.addEventListener("load", async () => {
 						const blogArticle = document.getElementById("blog-article")
-						const post = (await fetchBlogPosts(postID)).data
+						const post = (await fetchBlogPost(postID)).data
 
 						if (post) {
 							const body = post.body

@@ -10,9 +10,9 @@ export const fetchBlogPost = postID => fetch(`${url}items/blog/${postID}`)
                                         .catch(reason => {error: reason})
 
 /**
- * @param {number} limit Maximum number of blog posts to fetch (inclusive).
+ * @param {object} options Descriptor to specify things like `limit` (inclusive) or `offset`.
  * @returns A @see Promise of an object with a post object `data` array or an `error` string.
  */
-export const fetchBlogPosts = limit => fetch(`${url}items/blog?limit=${limit}`)
+export const fetchBlogPosts = options => fetch(`${url}items/blog?limit=${options.limit}`)
                                         .then(response => response.json())
                                         .catch(reason => reason)

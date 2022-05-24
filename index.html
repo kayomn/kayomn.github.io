@@ -22,8 +22,7 @@
 
 						window.addEventListener("load", async () => {
 							const blogFeed = document.getElementById("blog-feed")
-							const postLimit = 10
-							const posts = (await fetchBlogPosts(blogPostLimit)).data
+							const posts = (await fetchBlogPosts({limit: 10})).data
 
 							if (posts) {
 								const htmlBlocks = []
