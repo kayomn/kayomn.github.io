@@ -6,13 +6,13 @@ const url = "https://cms.kayomn.net/"
  * @returns A @see Promise of an object with a post `data` object or an `error` string.
  */
 export const fetchBlogPost = postID => fetch(`${url}items/blog/${postID}`)
-                                        .then(response => response.json())
-                                        .catch(reason => {error: reason})
+										.then(response => response.json())
+										.catch(reason => {error: reason})
 
 /**
  * @param {object} options Descriptor to specify things like `limit` (inclusive) or `offset`.
  * @returns A @see Promise of an object with a post object `data` array or an `error` string.
  */
 export const fetchBlogPosts = options => fetch(`${url}items/blog?limit=${options.limit}`)
-                                        .then(response => response.json())
-                                        .catch(reason => {error: reason})
+										.then(response => response.json())
+										.catch(reason => {error: reason})
