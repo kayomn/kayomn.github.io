@@ -22,7 +22,7 @@
 
 						window.addEventListener("load", async () => {
 							const blogFeed = document.getElementById("blog-feed")
-							const posts = (await fetchBlogPosts({limit: 10})).data
+							const posts = (await fetchBlogPosts({limit: 10}).catch(reason => {error: reason})).data
 
 							if (posts) {
 								const htmlBlocks = []
@@ -49,12 +49,16 @@
 					<div id="github-feed"></div>
 
 					<script type="module">
+						import {fetchRepos} from "/scripts/github.js"
+
 						window.addEventListener("load", async () => {
 							const githubFeed = document.getElementById("github-feed")
 
-							const repos = await fetch("https://api.github.com/users/kayomn/repos")
-								.then(response => response.json())
-								.catch(_ => [])
+							const repos = await fetchRepos("kayomn").catch(reason => {
+								console.warn(reason)
+
+								return []
+							})
 
 							if (repos.length) {
 								const htmlBlocks = []
@@ -68,7 +72,7 @@
 
 								githubFeed.innerHTML = htmlBlocks.join("\n")
 							} else {
-								githubFeed.innerHTML = `<div style="font-style: italic;">Github feed temporarily unavailable.</div>`
+								githubFeed.innerHTML = `<div style="font-style: italic;">Github feed empty or temporarily unavailable.</div>`
 							}
 						})
 					</script>

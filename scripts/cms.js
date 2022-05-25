@@ -7,7 +7,6 @@ const url = "https://cms.kayomn.net/"
  */
 export const fetchBlogPost = postID => fetch(`${url}items/blog/${postID}`)
 										.then(response => response.json())
-										.catch(reason => {error: reason})
 
 /**
  * @param {object} options Descriptor to specify things like `limit` (inclusive) or `offset`.
@@ -15,4 +14,3 @@ export const fetchBlogPost = postID => fetch(`${url}items/blog/${postID}`)
  */
 export const fetchBlogPosts = options => fetch(`${url}items/blog?limit=${options.limit}`)
 										.then(response => response.json())
-										.catch(reason => {error: reason})
