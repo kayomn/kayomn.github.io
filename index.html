@@ -18,11 +18,11 @@
 					<div id="blog-feed"></div>
 
 					<script type="module">
-						import {fetchBlogPosts} from "/scripts/cms.js"
+						import {fetchAllBlogPosts} from "/scripts/cms.js"
 
 						window.addEventListener("load", async () => {
 							const blogFeed = document.getElementById("blog-feed")
-							const posts = (await fetchBlogPosts({limit: 10}).catch(reason => {error: reason})).data
+							const posts = (await fetchAllBlogPosts({limit: 10}).catch(reason => {error: reason})).data
 
 							if (posts) {
 								const htmlBlocks = []
