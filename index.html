@@ -28,11 +28,9 @@
 								const htmlBlocks = []
 
 								for (const post of posts) {
-									const date = new Date(post.date_updated)
-
 									htmlBlocks.push(`<div style="animation: slide-right 0.4s ease;">
 										<a href="./blog?post=${post.id}" class="subtitle">${post.title}</a>
-										<div>Posted ${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}</div>
+										<div>Posted ${new Date(post.date_updated).toLocaleDateString(navigator.languages)}</div>
 										<p>${post.body.substring(0, 256)}...</p>
 									</div>`)
 								}
