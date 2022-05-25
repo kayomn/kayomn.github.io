@@ -15,4 +15,4 @@ export const fetchBlogPost = postID => fetch(`${url}items/blog/${postID}`)
  */
 export const fetchBlogPosts = options => fetch(`${url}items/blog?limit=${options.limit}`)
                                         .then(response => response.json())
-                                        .catch(reason => reason)
+                                        .catch(reason => {error: reason})
