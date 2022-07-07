@@ -1,9 +1,8 @@
 = Hacking Generator Functions in {cpp}
 
-:keywords: {cpp} functions hacking lambdas programming x86-64
-:description: Taking a look at all the dark corners regarding lambas in {c++}.
+:keywords: {cpp}, functions, hacking, lambdas, programming, x86-64
+:brief: Taking a look at all the dark corners regarding lambas in {c++}.
 :author: Kayomn
-:docdate: 2022-05-22
 
 == Preface
 
