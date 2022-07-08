@@ -14,7 +14,7 @@ export class Post {
 
 const jsonify = response => response.json()
 
-export const fetchBlogPosts = query => fetch(`${blogRepoURL}/contents/blog`).then(jsonify).then(async blogFolder => {
+export const fetchBlogPosts = query => fetch(`${blogRepoURL}/contents/posts`).then(jsonify).then(async blogFolder => {
 	const posts = []
 
 	if (blogFolder.length != 0) {
@@ -37,7 +37,7 @@ export const fetchBlogPosts = query => fetch(`${blogRepoURL}/contents/blog`).the
 	return posts
 })
 
-export const fetchBlogPost = slug => fetch(`${blogRepoURL}/contents/blog/${slug}.adoc`).then(jsonify).then(async file => {
+export const fetchBlogPost = slug => fetch(`${blogRepoURL}/contents/posts/${slug}.adoc`).then(jsonify).then(async file => {
 	return new Post(slug, Asciidoctor().load(atob(file.content)))
 })
 
