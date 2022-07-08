@@ -5,6 +5,7 @@
 		<meta charset="utf-8" />
 		<link rel="stylesheet" type="text/css" href="/styles/house.css" />
 		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<script src="/scripts/asciidoctor.js"></script>
 		<title>[ Kayomn ]</title>
 	</head>
 
@@ -18,26 +19,29 @@
 					<div id="blog-feed"></div>
 
 					<script type="module">
-						import {fetchAllBlogPosts} from "/scripts/cms.js"
+						import {fetchBlogPosts} from "/scripts/github.js"
 
 						window.addEventListener("load", async () => {
-							const blogFeed = document.getElementById("blog-feed")
-							const posts = (await fetchAllBlogPosts({limit: 10}).catch(reason => {error: reason})).data
+							const feed = document.getElementById("blog-feed")
+							const posts = await fetchBlogPosts({limit: 10}).catch(() => [])
 
-							if (posts) {
+							if (posts.length != 0) {
 								const htmlBlocks = []
 
 								for (const post of posts) {
+									const asciidocument = post.asciidocument
+									const sections = asciidocument.getSections()
+
 									htmlBlocks.push(`<div style="animation: slide-right 0.4s ease;">
-										<a href="./blog?post=${post.id}" class="subtitle">${post.title}</a>
-										<div>Posted ${new Date(post.date_updated).toLocaleDateString(navigator.languages)}</div>
-										<p>${post.body.substring(0, 256)}...</p>
+										<a href="./blog?post=${post.slug}" class="subtitle">${asciidocument.getDocumentTitle()}</a>
+										<div>Updated ${asciidocument.getAttribute("docdate")}</div>
+										<p>${(sections.length == 0) ? "" : sections[0].getContent().substring(0, 252)}...</p>
 									</div>`)
 								}
 
-								blogFeed.innerHTML = htmlBlocks.join("\n")
+								feed.innerHTML = htmlBlocks.join("\n")
 							} else {
-								blogFeed.innerHTML = `<div style="font-style: italic;">Blog feed temporarily unavailable.</div>`
+								feed.innerHTML = `<div style="font-style: italic;">Blog feed unavailable.</div>`
 							}
 						})
 					</script>

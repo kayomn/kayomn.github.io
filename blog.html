@@ -5,6 +5,7 @@
 		<meta charset="utf-8" />
 		<link rel="stylesheet" type="text/css" href="/styles/house.css" />
 		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<script src="/scripts/asciidoctor.js"></script>
 		<title>[ Kayomn ]</title>
 	</head>
 
@@ -13,10 +14,9 @@
 
 		<main style="min-height: 700px;">
 			<article id="blog-article" class="letter"></article>
-			<script src="https://unpkg.com/commonmark@0.29.3/dist/commonmark.js"></script>
 
 			<script type="module">
-				import {fetchBlogPost} from "/scripts/cms.js"
+				import {fetchBlogPost} from "/scripts/github.js"
 
 				const searchParams = new URLSearchParams(window.location.search)
 				const postID = searchParams.get("post")
@@ -24,18 +24,19 @@
 				if (postID) {
 					window.addEventListener("load", async () => {
 						const blogArticle = document.getElementById("blog-article")
-						const post = (await fetchBlogPost(postID)).data
+						const post = await fetchBlogPost(postID)
 
 						if (post) {
-							const body = post.body
+							const asciidocument = post.asciidocument
 							const wordsPerMinute = 225;
+							const content = asciidocument.getContent()
 
-							blogArticle.innerHTML = `<div class="title">${post.title}</div>
+							blogArticle.innerHTML = `<div class="title">${asciidocument.getDocumentTitle()}</div>
 
 							<div style="animation: slide-right 0.4s ease;">
-								<div>Posted ${new Date(post.date_updated).toLocaleDateString(navigator.languages)}</div>
-								<div>${Math.ceil(body.trim().split(/\s+/).length / wordsPerMinute)} minute read.</div>
-								<div>${new commonmark.HtmlRenderer().render(new commonmark.Parser().parse(body))}</div>
+								<div>Last updated ${asciidocument.getAttribute("docdate")}</div>
+								<div>${Math.ceil(content.trim().split(/\s+/).length / wordsPerMinute)} minute read.</div>
+								<div>${content}</div>
 							</div>`
 						} else {
 							blogArticle.innerHTML = `<div style="font-style: italic;">Could not fetch blog post associated with the given ID.</div>`
