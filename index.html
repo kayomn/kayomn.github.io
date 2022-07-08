@@ -33,7 +33,7 @@
 									const sections = asciidocument.getSections()
 
 									htmlBlocks.push(`<div style="animation: slide-right 0.4s ease;">
-										<a href="./blog?post=${post.slug}" class="subtitle">${asciidocument.getDocumentTitle()}</a>
+										<a href="./blog?post=${post.slug}" class="subtitle">${asciidocument.getDocumentTitle() || "Untitled"}</a>
 										<div>Updated ${asciidocument.getAttribute("docdate")}</div>
 										<p>${(sections.length == 0) ? "" : sections[0].getContent().substring(0, 252)}...</p>
 									</div>`)
