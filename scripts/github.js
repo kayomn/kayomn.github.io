@@ -8,8 +8,9 @@ export const fetchBlogPosts = query => fetch(`${blogRepoURL}/contents/blog`).the
 
 	if (folder.length != 0) {
 		const asciidoctor = Asciidoctor()
+		const fileCount = folder.length
 
-		for (const entry of folder) {
+		for (const entry of folder.slice(fileCount - query.limit || fileCount, fileCount).reverse()) {
 			const name = entry.name
 			const file = fetch(`${blogRepoURL}/contents/blog/${name}`).then(jsonify)
 			const extensionIndex = name.indexOf(".")
