@@ -3,22 +3,33 @@ const blogRepoURL = `${apiURL}/repos/kayomn/kayomn.github.io`
 
 const jsonify = response => response.json()
 
-export const fetchBlogPosts = query => fetch(`${blogRepoURL}/contents/blog`).then(jsonify).then(async folder => {
+export const fetchBlogPosts = query => fetch(`${blogRepoURL}/contents/blog`).then(jsonify).then(async blogFolder => {
 	const posts = []
 
-	if (folder.length != 0) {
+	if (blogFolder.length != 0) {
 		const asciidoctor = Asciidoctor()
-		const fileCount = folder.length
+		const defaultLimit = 10
+		var limit = query.limit || defaultLimit
 
-		for (const entry of folder.slice(fileCount - query.limit || fileCount, fileCount).reverse()) {
-			const name = entry.name
-			const file = fetch(`${blogRepoURL}/contents/blog/${name}`).then(jsonify)
-			const extensionIndex = name.indexOf(".")
+		for (const blogFolderEntry of blogFolder.slice().reverse()) {
+			if (limit == 0) break
 
-			posts.push({
-				slug: ((extensionIndex > -1) ? name.substring(0, extensionIndex) : name),
-				asciidocument: asciidoctor.load(atob((await file).content)),
-			})
+			const blogRepoYearURL = `${blogRepoURL}/contents/blog/${blogFolderEntry.name}`
+			const yearFolder = await fetch(blogRepoYearURL).then(jsonify)
+			const fileCount = yearFolder.length
+
+			for (const yearFolderEntry of yearFolder.slice(fileCount - Math.min(limit, fileCount), fileCount).reverse()) {
+				const name = yearFolderEntry.name
+				const file = fetch(`${blogRepoYearURL}/${name}`).then(jsonify)
+				const extensionIndex = name.indexOf(".")
+
+				posts.push({
+					slug: ((extensionIndex > -1) ? name.substring(0, extensionIndex) : name),
+					asciidocument: asciidoctor.load(atob((await file).content)),
+				})
+
+				limit -= 1
+			}
 		}
 	}
 
