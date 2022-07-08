@@ -18,29 +18,29 @@
 			<script type="module">
 				import {fetchBlogPost} from "/scripts/github.js"
 
-				const searchParams = new URLSearchParams(window.location.search)
-				const postID = searchParams.get("post")
+				const postID = (new URLSearchParams(window.location.search)).get("post")
 
 				if (postID) {
 					window.addEventListener("load", async () => {
 						const blogArticle = document.getElementById("blog-article")
-						const post = await fetchBlogPost(postID)
 
-						if (post) {
+						fetchBlogPost(postID).catch(reason => {
+							console.warn(reason)
+
+							blogArticle.innerHTML = `<div style="font-style: italic;">Could not fetch blog post with the given ID.</div>`
+						}).then(post => {
 							const asciidocument = post.asciidocument
 							const wordsPerMinute = 225;
 							const content = asciidocument.getContent()
 
-							blogArticle.innerHTML = `<div class="title">${asciidocument.getDocumentTitle()}</div>
+							blogArticle.innerHTML = `<div class="title">${asciidocument.getDocumentTitle() || "Untitled"}</div>
 
-							<div style="animation: slide-right 0.4s ease;">
-								<div>Last updated ${asciidocument.getAttribute("docdate")}</div>
-								<div>${Math.ceil(content.trim().split(/\s+/).length / wordsPerMinute)} minute read.</div>
-								<div>${content}</div>
-							</div>`
-						} else {
-							blogArticle.innerHTML = `<div style="font-style: italic;">Could not fetch blog post associated with the given ID.</div>`
-						}
+								<div style="animation: slide-right 0.4s ease;">
+									<div>Last updated ${asciidocument.getAttribute("docdate")}</div>
+									<div>${Math.ceil(content.trim().split(/\s+/).length / wordsPerMinute)} minute read.</div>
+									<div>${content}</div>
+								</div>`
+						})
 					})
 				} else {
 					console.warn("Attempt to get blog without post ID, redirecting to `/`");

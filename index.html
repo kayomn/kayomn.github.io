@@ -23,26 +23,28 @@
 
 						window.addEventListener("load", async () => {
 							const feed = document.getElementById("blog-feed")
-							const posts = await fetchBlogPosts({limit: 10}).catch(() => [])
 
-							if (posts.length != 0) {
+							fetchBlogPosts({limit: 10}).catch(reason => {
+								console.warn(reason)
+
+								feed.innerHTML = `<div style="font-style: italic;">Blog feed unavailable.</div>`
+							}).then(posts => {
 								const htmlBlocks = []
 
 								for (const post of posts) {
 									const asciidocument = post.asciidocument
 									const sections = asciidocument.getSections()
+									const briefLength = 252
 
 									htmlBlocks.push(`<div style="animation: slide-right 0.4s ease;">
 										<a href="./blog?post=${post.slug}" class="subtitle">${asciidocument.getDocumentTitle() || "Untitled"}</a>
-										<div>Updated ${asciidocument.getAttribute("docdate")}</div>
-										<p>${(sections.length == 0) ? "" : sections[0].getContent().substring(0, 252)}...</p>
+										<div>Last updated ${asciidocument.getAttribute("docdate")}</div>
+										<p>${(sections.length == 0) ? "" : sections[0].getContent().substring(0, briefLength)}...</p>
 									</div>`)
 								}
 
 								feed.innerHTML = htmlBlocks.join("\n")
-							} else {
-								feed.innerHTML = `<div style="font-style: italic;">Blog feed unavailable.</div>`
-							}
+							})
 						})
 					</script>
 				</div>
@@ -56,15 +58,13 @@
 						import {fetchRepos} from "/scripts/github.js"
 
 						window.addEventListener("load", async () => {
-							const githubFeed = document.getElementById("github-feed")
+							const feed = document.getElementById("github-feed")
 
-							const repos = await fetchRepos("kayomn").catch(reason => {
+							fetchRepos("kayomn").catch(reason => {
 								console.warn(reason)
 
-								return []
-							})
-
-							if (repos.length) {
+								feed.innerHTML = `<div style="font-style: italic;">Github feed unavailable.</div>`
+							}).then(repos => {
 								const htmlBlocks = []
 
 								for (const repo of repos.sort((a, b) => (b.stargazers_count - a.stargazers_count))) {
@@ -74,10 +74,8 @@
 									</div>`)
 								}
 
-								githubFeed.innerHTML = htmlBlocks.join("\n")
-							} else {
-								githubFeed.innerHTML = `<div style="font-style: italic;">Github feed empty or temporarily unavailable.</div>`
-							}
+								feed.innerHTML = htmlBlocks.join("\n")
+							})
 						})
 					</script>
 				</div>
