@@ -1,7 +1,7 @@
 = Hacking Generator Functions in {cpp}
 
 :keywords: {cpp}, functions, hacking, lambdas, programming, x86-64
-:brief: Taking a look at all the dark corners regarding lambas in {c++}.
+:description: Taking a look at all the dark corners regarding lambas in {c++}.
 :author: Kayomn
 
 == Preface
@@ -93,7 +93,7 @@ Through personal practice, I've found them to be incredibly powerful beyond as a
 
 The above code demonstrates their use in the aforementioned manner as a simple cleanup function, which removes code duplication between the two units of logic calling `destroyChain`. This same solution could have been achieved through a secondary method in the `HashTable` class, however it then requires the code reader to go elsewhere to find its declaration and further pollutes the class namespace with otherwise unnecessary symbols. With that said, it's important not to lose sight of overhead considerations when using lambdas.
 
-Programmers coming from languages like C# or Java may have a pre-conceived notion that lambdas are inherently more costly compared to methods, however this is not necessarily the case. In part, this is because {cpp} can reasonable about the size of a lambda at compile-time because captured values are explicit rather than implicit. In contrast, a Java lambda or C# delegate does not necessarily know the bounds of its stack at compile-time and must dynamically allocate it during execution - introducing the potential for more overhead if it cannot be hoisted onto the stack via https://en.wikipedia.org/wiki/Escape_analysis[escape analysis].
+Programmers coming from languages like C# or Java may have a pre-conceived notion that lambdas are inherently more costly compared to methods, however this is not necessarily the case. In part, this is because {cpp} can reason about the size of a lambda at compile-time because captured values are explicit rather than implicit. In contrast, a Java lambda or C# delegate does not necessarily know the bounds of its stack at compile-time and must dynamically allocate it during execution - introducing the potential for more overhead if it cannot be hoisted onto the stack via https://en.wikipedia.org/wiki/Escape_analysis[escape analysis].
 
 [source, x86-64]
 ----
