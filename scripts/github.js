@@ -10,11 +10,13 @@ export const fetchBlogPosts = query => fetch(`${blogRepoURL}/contents/blog`).the
 		const asciidoctor = Asciidoctor()
 
 		for (const entry of folder) {
-			const file = await fetch(`${blogRepoURL}/contents/blog/${entry.name}`).then(jsonify)
+			const name = entry.name
+			const file = fetch(`${blogRepoURL}/contents/blog/${name}`).then(jsonify)
+			const extensionIndex = name.indexOf(".")
 
 			posts.push({
-				slug: entry.name,
-				asciidocument: asciidoctor.load(atob(file.content)),
+				slug: ((extensionIndex > -1) ? name.substring(0, extensionIndex) : name),
+				asciidocument: asciidoctor.load(atob((await file).content)),
 			})
 		}
 	}
