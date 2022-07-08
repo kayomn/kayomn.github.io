@@ -23,7 +23,7 @@ export const fetchBlogPosts = query => fetch(`${blogRepoURL}/contents/posts`).th
 
 		for (const entry of blogFolder.slice(fileCount - (query.limit || fileCount), fileCount).reverse()) {
 			const name = entry.name
-			const file = fetch(`${blogRepoURL}/contents/${name}`).then(jsonify)
+			const file = fetch(`${blogRepoURL}/contents/posts/${name}`).then(jsonify)
 			const extensionIndex = name.indexOf(".")
 
 			// TODO: Add error checking.
