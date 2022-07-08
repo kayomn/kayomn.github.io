@@ -29,14 +29,14 @@
 
 							blogArticle.innerHTML = `<div style="font-style: italic;">Could not fetch blog post with the given ID.</div>`
 						}).then(post => {
-							const asciidocument = post.asciidocument
 							const wordsPerMinute = 225;
+							const asciidocument = post.asciidocument
 							const content = asciidocument.getContent()
 
 							blogArticle.innerHTML = `<div class="title">${asciidocument.getDocumentTitle() || "Untitled"}</div>
 
 								<div style="animation: slide-right 0.4s ease;">
-									<div>Last updated ${asciidocument.getAttribute("docdate")}</div>
+									<div>Posted ${post.posted().toLocaleDateString(navigator.language)}</div>
 									<div>${Math.ceil(content.trim().split(/\s+/).length / wordsPerMinute)} minute read.</div>
 									<div>${content}</div>
 								</div>`

@@ -38,7 +38,7 @@
 
 									htmlBlocks.push(`<div style="animation: slide-right 0.4s ease;">
 										<a href="./blog?post=${post.slug}" class="subtitle">${asciidocument.getDocumentTitle() || "Untitled"}</a>
-										<div>Last updated ${asciidocument.getAttribute("docdate")}</div>
+										<div>Posted ${post.posted().toLocaleDateString(navigator.language)}</div>
 										<p>${(sections.length == 0) ? "" : sections[0].getContent().substring(0, briefLength)}...</p>
 									</div>`)
 								}

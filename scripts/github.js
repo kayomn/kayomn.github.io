@@ -1,6 +1,17 @@
 const apiURL = "https://api.github.com"
 const blogRepoURL = `${apiURL}/repos/kayomn/kayomn.github.io`
 
+export class Post {
+	constructor(slug, asciidocument) {
+		this.slug = slug
+		this.asciidocument = asciidocument
+	}
+
+	posted() {
+		return new Date(this.slug.substring(0, 10))
+	}
+}
+
 const jsonify = response => response.json()
 
 export const fetchBlogPosts = query => fetch(`${blogRepoURL}/contents/blog`).then(jsonify).then(async blogFolder => {
@@ -8,28 +19,18 @@ export const fetchBlogPosts = query => fetch(`${blogRepoURL}/contents/blog`).the
 
 	if (blogFolder.length != 0) {
 		const asciidoctor = Asciidoctor()
-		const defaultLimit = 10
-		var limit = query.limit || defaultLimit
+		const fileCount = blogFolder.length
 
-		for (const blogFolderEntry of blogFolder.slice().reverse()) {
-			if (limit == 0) break
+		for (const entry of blogFolder.slice(fileCount - (query.limit || fileCount), fileCount).reverse()) {
+			const name = entry.name
+			const file = fetch(`${blogRepoURL}/contents/blog/${name}`).then(jsonify)
+			const extensionIndex = name.indexOf(".")
 
-			const blogRepoYearURL = `${blogRepoURL}/contents/blog/${blogFolderEntry.name}`
-			const yearFolder = await fetch(blogRepoYearURL).then(jsonify)
-			const fileCount = yearFolder.length
-
-			for (const yearFolderEntry of yearFolder.slice(fileCount - Math.min(limit, fileCount), fileCount).reverse()) {
-				const name = yearFolderEntry.name
-				const file = fetch(`${blogRepoYearURL}/${name}`).then(jsonify)
-				const extensionIndex = name.indexOf(".")
-
-				posts.push({
-					slug: ((extensionIndex > -1) ? name.substring(0, extensionIndex) : name),
-					asciidocument: asciidoctor.load(atob((await file).content)),
-				})
-
-				limit -= 1
-			}
+			// TODO: Add error checking.
+			posts.push(new Post(
+				(extensionIndex > -1) ? name.substring(0, extensionIndex) : name,
+				asciidoctor.load(atob((await file).content)))
+			)
 		}
 	}
 
@@ -37,10 +38,7 @@ export const fetchBlogPosts = query => fetch(`${blogRepoURL}/contents/blog`).the
 })
 
 export const fetchBlogPost = slug => fetch(`${blogRepoURL}/contents/blog/${slug}.adoc`).then(jsonify).then(async file => {
-	return {
-		slug,
-		asciidocument: Asciidoctor().load(atob(file.content)),
-	}
+	return new Post(slug, Asciidoctor().load(atob(file.content)))
 })
 
 /**
