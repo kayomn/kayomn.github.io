@@ -1,5 +1,5 @@
 const apiURL = "https://api.github.com"
-const blogRepoURL = `${apiURL}/repos/kayomn/kayomn.github.io`
+const blogRepoURL = `${apiURL}/repos/kayomn/blog`
 
 export class Post {
 	constructor(slug, asciidocument) {
@@ -23,7 +23,7 @@ export const fetchBlogPosts = query => fetch(`${blogRepoURL}/contents/blog`).the
 
 		for (const entry of blogFolder.slice(fileCount - (query.limit || fileCount), fileCount).reverse()) {
 			const name = entry.name
-			const file = fetch(`${blogRepoURL}/contents/blog/${name}`).then(jsonify)
+			const file = fetch(`${blogRepoURL}/contents/${name}`).then(jsonify)
 			const extensionIndex = name.indexOf(".")
 
 			// TODO: Add error checking.
